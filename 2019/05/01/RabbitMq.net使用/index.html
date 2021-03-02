@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          RabbitMq.net使用 - xyzko1 | 博客
+        
+    </title>
+
+    <link rel="canonical" href="https://xyzko1.github.io/2019/05/01/RabbitMq.net使用/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('Demo.png')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Hexo" title="Hexo">Hexo</a>
+                            
+                              <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                            
+                        </div>
+                        <h1>RabbitMq.net使用</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by xyzko1 on
+                            2019-05-01
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">xyz的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>created by <a href="https://github.com/xyzko1/xyzko1.github.io" target="_blank" rel="noopener">xyzko1</a><br>
+2019年05月01日 19:51:24</p>
+</blockquote>
+<p>本文转载来自 【<a href="http://www.cnblogs.com/yangecnu/p/Introduce-RabbitMQ.html%E3%80%91%E5%86%99%E7%9A%84%E5%BE%88%E8%AF%A6%E7%BB%86%E3%80%82" target="_blank" rel="noopener">http://www.cnblogs.com/yangecnu/p/Introduce-RabbitMQ.html】写的很详细。</a></p>
+<p>文件安装包官方DEMO下载地址是：<a href="http://pan.baidu.com/s/1c1vgdiC" target="_blank" rel="noopener">http://pan.baidu.com/s/1c1vgdiC</a></p>
+<p>在企业应用系统领域，会面对不同系统之间的通信、集成与整合，尤其当面临异构系统时，这种分布式的调用与通信变得越发重要。其次，系统中一般会有很多对实时性要求不高的但是执行起来比较较耗时的地方，比如发送短信，邮件提醒，更新文章阅读计数，记录用户操作日志等等，如果实时处理的话，在用户访问量比较大的情况下，对系统压力比较大。</p>
+<p>面对这些问题，我们一般会将这些请求，放在消息队列中处理；异构系统之间使用消息进行通讯。消息传递相较文件传递与远程过程调用（RPC）而言，似乎更胜一筹，因为它具有更好的平台无关性，并能够很好地支持并发与异步调用。所以如果系统中出现了如下情况:</p>
+<ul>
+<li>对操作的实时性要求不高，而需要执行的任务极为耗时；</li>
+<li>存在异构系统间的整合；</li>
+</ul>
+<p>一般的可以考虑引入消息队列。对于第一种情况，常常会选择消息队列来处理执行时间较长的任务。引入的消息队列就成了消息处理的缓冲区。消息队列引入的异步通信机制，使得发送方和接收方都不用等待对方返回成功消息，就可以继续执行下面的代码，从而提高了数据处理的能力。尤其是当访问量和数据流量较大的情况下，就可以结合消息队列与后台任务，通过避开高峰期对大数据进行处理，就可以有效降低数据库处理数据的负荷。</p>
+<p>在前面的一篇讲解<a href="http://www.cnblogs.com/yangecnu/p/Introduction-CQRS.html" target="_blank" rel="noopener">CQRS模式</a>的文章中，所有的对系统的状态的更改都是通过事件来完成，一般的将事件存储到消息队列中，然后进行统一的处理。</p>
+<p>本文简单介绍在RabbitMQ这一消息代理工具，以及在.NET中如何使用RabbitMQ.</p>
+<h1><span id="环境搭建">环境搭建</span></h1>
+<hr>
+<p>首先，由于RabbitMQ使用Erlang编写的，需要运行在Erlang运行时环境上，所以在安装RabbitMQ Server之前需要安装Erlang 运行时环境，可以到<a href="http://www.erlang.org/download.html" target="_blank" rel="noopener">Erlang官网下载</a>对应平台的安装文件。如果没有安装运行时环境，安装RabbitMQ Server的时候，会提示需要先安装Erlang环境。 安装完成之后，确保已经将Erlang的安装路径注册到系统的环境变量中。安装完Erlang之后，这个环境会自动设置，如果没有，在administrator环境下在控制台下面输入，也可以设置：</p>
+<p>Setx  ERLANG_HOME “D:\Program Files (x86)\erl6.3″</p>
+<p><img src="1.png" alt="avatar"></p>
+<p>然后，去RabbitMQ官网下载<a href="http://www.rabbitmq.com/download.html" target="_blank" rel="noopener">RabbitMQ Server服务端程序</a>，选择合适的平台版本下载。安装完成之后，就可以开始使用了。</p>
+<p>现在就可以对RabbitMQ Server进行配置了。</p>
+<p>首先，切换到RabbitMQ Server的安装目录：</p>
+<p><img src="2.png" alt="avatar"></p>
+<p>在sbin下面有很多batch文件，用来控制RabbitMQ Server，当然您也可以直接在安装开始菜单中来执行相应的操作：</p>
+<p><img src="3.png" alt="avatar"></p>
+<p>最简单的方式是使RabbitMQ以Windows Service的方式在后台运行，所以我们需要以<strong>管理员权限</strong>打开cmd，然后切换到sbin目录下，执行这三条命令即可：</p>
+<p>rabbitmq-service install rabbitmq-service enable rabbitmq-service start</p>
+<p><img src="4.png" alt="avatar"></p>
+<p>现在RabbitMQ的服务端已经启动起来了。</p>
+<p>下面可以使用sbin目录下面的rabbitmqctl.bat这个脚本来查看和控制服务端状态的，在cmd中直接运行rabbitmqctl status。如果看到以下结果：</p>
+<p><img src="5.png" alt="avatar"></p>
+<p>显示node没有连接上，需要到C:\Windows目录下，将.erlang.cookie文件，拷贝到用户目录下 C:\Users{用户名}，这是Erlang的Cookie文件，允许与Erlang进行交互，现在重复运行刚才的命令就会得到如下信息：</p>
+<p><img src="6.png" alt="avatar"></p>
+<p>RabbitMQ Server上面也有用户概念，安装好之后，使用rabbitmqctl list_users命令，可以看到上面目前的用户：</p>
+<p><img src="7.png" alt="avatar"></p>
+<p>可以看到，现在只有一个角色为administrator的名为guest的用户，这个是RabbitMQ默认为我们创建的，他有RabbitMQ的所有权限，一般的，我们需要新建一个我们自己的用户，设置密码，并授予权限，并将其设置为管理员，可以使用下面的命令来执行这一操作：</p>
+<p>rabbitmqctl  add_user  yy  hello! rabbitmqctl  set_permissions  yy  “.<em>&quot;  &quot;.</em>”  “.*” rabbitmqctl  set_user_tags yy administrator</p>
+<p><img src="8.png" alt="avatar"></p>
+<p>上面的一条命令添加了一个名为yy的用户，并设置了密码hello！，下面的命令为用户yy分别授予对所有消息队列的配置、读和写的权限。</p>
+<p>现在我们可以将默认的guest用户删掉，使用下面的命令即可：</p>
+<p>rabbitmqctl delete_user guest</p>
+<p>如果要修改密码，可以使用下面的命令：</p>
+<p>rabbitmqctl change_password {username}  {newpassowrd}</p>
+<hr>
+<h1><span id="开始使用">开始使用</span></h1>
+<p>在.NET中使用RabbitMQ需要下载RabbitMQ的客户端程序集，可以到官网下载，下载解压后就可以得到RabbitMQ.Client.dll，这就是RabbitMQ的客户端。<br>
+在使用RabitMQ之前，需要对下面的几个基本概念说明一下：<br>
+RabbitMQ是一个消息代理。他从消息生产者(producers)那里接收消息，然后把消息送给消息消费者（consumer）在发送和接受之间，他能够根据设置的规则进行路由，缓存和持久化。<br>
+一般提到RabbitMQ和消息，都用到一些专有名词。<br>
+生产(Producing)意思就是发送。发送消息的程序就是一个生产者(producer)。我们一般用&quot;P&quot;来表示：<br>
+<img src="9.png" alt="avatar"><br>
+队列(queue)就是邮箱的名称。消息通过你的应用程序和RabbitMQ进行传输，它们只能存储在队列（queue）中。 队列（queue）容量没有限制，你要存储多少消息都可以——基本上是一个无限的缓冲区。多个生产者（producers）能够把消息发送给同一个队列，同样，多个消费者（consumers）也能从同一个队列（queue）中获取数据。队列可以画成这样（图上是队列的名称）：<br>
+<img src="10.png" alt="avatar"><br>
+消费（Consuming）和获取消息是一样的意思。一个消费者（consumer）就是一个等待获取消息的程序。我们把它画作&quot;C&quot;：<br>
+<img src="11.png" alt="avatar"><br>
+通常，消息生产者，消息消费者和消息代理不在同一台机器上。</p>
+<h2><span id="hello-world">Hello World</span></h2>
+<p>为了展示RabbitMQ的基本使用，我们发送一个HelloWorld消息，然后接收并处理。<br>
+<img src="12.png" alt="avatar"><br>
+首先创建一个控制台程序，用来将消息发送到RabbitMQ的消息队列中，代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">        factory.HostName = <span class="string">"localhost"</span>;</span><br><span class="line">        factory.UserName = <span class="string">"yy"</span>;</span><br><span class="line">        factory.Password = <span class="string">"hello!"</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">using</span> (<span class="keyword">var</span> connection = factory.CreateConnection())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">using</span> (<span class="keyword">var</span> channel = connection.CreateModel())</span><br><span class="line">            &#123;</span><br><span class="line">                channel.QueueDeclare(<span class="string">"hello"</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">null</span>);</span><br><span class="line">                <span class="keyword">string</span> message = <span class="string">"Hello World"</span>;</span><br><span class="line">                <span class="keyword">var</span> body = Encoding.UTF8.GetBytes(message);</span><br><span class="line">                channel.BasicPublish(<span class="string">""</span>, <span class="string">"hello"</span>, <span class="literal">null</span>, body);</span><br><span class="line">                Console.WriteLine(<span class="string">" set &#123;0&#125;"</span>, message);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>首先，需要创建一个ConnectionFactory，设置目标，由于是在本机，所以设置为localhost，如果RabbitMQ不在本机，只需要设置目标机器的IP地址或者机器名称即可，然后设置前面创建的用户名yy和密码hello！。<br>
+紧接着要创建一个Channel，如果要发送消息，需要创建一个队列，然后将消息发布到这个队列中。在创建队列的时候，只有RabbitMQ上该队列不存在，才会去创建。消息是以二进制数组的形式传输的，所以如果消息是实体对象的话，需要序列化和然后转化为二进制数组。<br>
+现在客户端发送代码已经写好了，运行之后，消息会发布到RabbitMQ的消息队列中，现在需要编写服务端的代码连接到RabbitMQ上去获取这些消息。<br>
+同样，创建一个名为Receive的服务端控制台应用程序，服务端代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> Main(string[] args)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="keyword">factory</span> = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">    <span class="keyword">factory</span>.HostName = <span class="string">"localhost"</span>;</span><br><span class="line">    <span class="keyword">factory</span>.UserName = <span class="string">"yy"</span>;</span><br><span class="line">    <span class="keyword">factory</span>.Password = <span class="string">"hello!"</span>;</span><br><span class="line"></span><br><span class="line">    using (<span class="keyword">var</span> connection = <span class="keyword">factory</span>.CreateConnection())</span><br><span class="line">    &#123;</span><br><span class="line">        using (<span class="keyword">var</span> channel = connection.CreateModel())</span><br><span class="line">        &#123;</span><br><span class="line">            channel.QueueDeclare(<span class="string">"hello"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> consumer = <span class="keyword">new</span> QueueingBasicConsumer(channel);</span><br><span class="line">            channel.BasicConsume(<span class="string">"hello"</span>, <span class="keyword">true</span>, consumer);</span><br><span class="line"></span><br><span class="line">            Console.WriteLine(<span class="string">" waiting for message."</span>);</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> ea = (BasicDeliverEventArgs)consumer.Queue.Dequeue();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">var</span> body = ea.Body;</span><br><span class="line">                <span class="keyword">var</span> message = Encoding.UTF8.GetString(body);</span><br><span class="line">                Console.WriteLine(<span class="string">"Received &#123;0&#125;"</span>, message);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和发送一样，首先需要定义连接，然后声明消息队列。要接收消息，需要定义一个Consume，然后从消息队列中不断Dequeue消息，然后处理。<br>
+现在发送端和接收端的代码都写好了，运行发送端，发送消息：<br>
+<img src="13.png" alt="avatar"><br>
+现在，名为hello的消息队列中，发送了一条消息。这条消息存储到了RabbitMQ的服务器上了。使用rabbitmqctl 的list_queues可以查看所有的消息队列，以及里面的消息个数，可以看到，目前Rabbitmq上只有一个消息队列，里面只有一条消息：<br>
+D:\Program Files\RabbitMQ Server\rabbitmq_server-3.4.2\sbin&gt;rabbitmqctl list_queues<br>
+Listing queues …<br>
+hello   1<br>
+现在运行接收端程序，如下：<br>
+<img src="14.png" alt="avatar"><br>
+可以看到，已经接受到了客户端发送的Hello World，现在再来看RabitMQ上的消息队列信息：<br>
+D:\Program Files\RabbitMQ Server\rabbitmq_server-3.4.2\sbin&gt;rabbitmqctl list_queues<br>
+Listing queues …<br>
+hello   0<br>
+可以看到，hello这个队列中的消息队列个数为0，这表示，当接收端，接收到消息之后，RabbitMQ上就把这个消息删掉了。</p>
+<h2><span id="工作队列">工作队列</span></h2>
+<p>前面的例子展示了如何往一个指定的消息队列中发送和收取消息。现在我们创建一个工作队列（work queue）来将一些耗时的任务分发给多个工作者（workers）：<br>
+<img src="15.png" alt="avatar"><br>
+工作队列（work queues, 又称任务队列Task Queues）的主要思想是为了避免立即执行并等待一些占用大量资源、时间的操作完成。而是把任务（Task）当作消息发送到队列中，稍后处理。一个运行在后台的工作者（worker）进程就会取出任务然后处理。当运行多个工作者（workers）时，任务会在它们之间共享。<br>
+这个在网络应用中非常有用，它可以在短暂的HTTP请求中处理一些复杂的任务。在一些实时性要求不太高的地方，我们可以处理完主要操作之后，以消息的方式来处理其他的不紧要的操作，比如写日志等等。<br>
+准备<br>
+在第一部分，发送了一个包含“Hello World!”的字符串消息。现在发送一些字符串，把这些字符串当作复杂的任务。这里使用time.sleep()函数来模拟耗时的任务。在字符串中加上点号（.）来表示任务的复杂程度，一个点（.）将会耗时1秒钟。比如&quot;Hello…&quot;就会耗时3秒钟。<br>
+对之前示例的send.cs做些简单的调整，以便可以发送随意的消息。这个程序会按照计划发送任务到我们的工作队列中。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">    factory.HostName = <span class="string">"localhost"</span>;</span><br><span class="line">    factory.UserName = <span class="string">"yy"</span>;</span><br><span class="line">    factory.Password = <span class="string">"hello!"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">using</span> (<span class="keyword">var</span> connection = factory.CreateConnection())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">using</span> (<span class="keyword">var</span> channel = connection.CreateModel())</span><br><span class="line">        &#123;</span><br><span class="line">            channel.QueueDeclare(<span class="string">"hello"</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">null</span>);</span><br><span class="line">            <span class="keyword">string</span> message = GetMessage(args);<span class="keyword">var</span> properties = channel.CreateBasicProperties();</span><br><span class="line">            properties.DeliveryMode = <span class="number">2</span>;<span class="keyword">var</span> body = Encoding.UTF8.GetBytes(message);</span><br><span class="line">            channel.BasicPublish(<span class="string">""</span>, <span class="string">"hello"</span>, properties, body);</span><br><span class="line">            Console.WriteLine(<span class="string">" set &#123;0&#125;"</span>, message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Console.ReadKey();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">string</span> <span class="title">GetMessage</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ((args.Length &gt; <span class="number">0</span>) ? <span class="keyword">string</span>.Join(<span class="string">" "</span>, args) : <span class="string">"Hello World!"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加粗部分是经过修改过了的。<br>
+接着我们修改接收端，让他根据消息中的逗点的个数来Sleep对应的秒数：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> Main(string[] args)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="keyword">factory</span> = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">    <span class="keyword">factory</span>.HostName = <span class="string">"localhost"</span>;</span><br><span class="line">    <span class="keyword">factory</span>.UserName = <span class="string">"yy"</span>;</span><br><span class="line">    <span class="keyword">factory</span>.Password = <span class="string">"hello!"</span>;</span><br><span class="line"></span><br><span class="line">    using (<span class="keyword">var</span> connection = <span class="keyword">factory</span>.CreateConnection())</span><br><span class="line">    &#123;</span><br><span class="line">        using (<span class="keyword">var</span> channel = connection.CreateModel())</span><br><span class="line">        &#123;</span><br><span class="line">            channel.QueueDeclare(<span class="string">"hello"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> consumer = <span class="keyword">new</span> QueueingBasicConsumer(channel);</span><br><span class="line">            channel.BasicConsume(<span class="string">"hello"</span>, <span class="keyword">true</span>, consumer);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> ea = (BasicDeliverEventArgs)consumer.Queue.Dequeue();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">var</span> body = ea.Body;</span><br><span class="line">                <span class="keyword">var</span> message = Encoding.UTF8.GetString(body);</span><br><span class="line"></span><br><span class="line">              <span class="built_in">int</span> dots = message.Split(<span class="string">'.'</span>).Length - <span class="number">1</span>;</span><br><span class="line">                Thread.Sleep(dots * <span class="number">1000</span>);Console.WriteLine(<span class="string">"Received &#123;0&#125;"</span>, message);</span><br><span class="line">                Console.WriteLine(<span class="string">"Done"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>轮询分发<br>
+使用工作队列的一个好处就是它能够并行的处理队列。如果堆积了很多任务，我们只需要添加更多的工作者（workers）就可以了，扩展很简单。<br>
+现在，我们先启动两个接收端，等待接受消息，然后启动一个发送端开始发送消息。<br>
+<img src="16.png" alt="avatar"><br>
+在cmd条件下，发送了5条消息，每条消息后面的逗点表示该消息需要执行的时长，来模拟耗时的操作。<br>
+然后可以看到，两个接收端依次接收到了发出的消息：<br>
+<img src="17.png" alt="avatar"><br>
+默认，RabbitMQ会将每个消息按照顺序依次分发给下一个消费者。所以每个消费者接收到的消息个数大致是平均的。 这种消息分发的方式称之为轮询（round-robin）。</p>
+<h2><span id="消息响应">消息响应</span></h2>
+<p>当处理一个比较耗时得任务的时候，也许想知道消费者（consumers）是否运行到一半就挂掉。在当前的代码中，当RabbitMQ将消息发送给消费者（consumers）之后，马上就会将该消息从队列中移除。此时，如果把处理这个消息的工作者（worker）停掉，正在处理的这条消息就会丢失。同时，所有发送到这个工作者的还没有处理的消息都会丢失。<br>
+我们不想丢失任何任务消息。如果一个工作者（worker）挂掉了，我们希望该消息会重新发送给其他的工作者（worker）。<br>
+为了防止消息丢失，RabbitMQ提供了消息响应（acknowledgments）机制。消费者会通过一个ack（响应），告诉RabbitMQ已经收到并处理了某条消息，然后RabbitMQ才会释放并删除这条消息。<br>
+如果消费者（consumer）挂掉了，没有发送响应，RabbitMQ就会认为消息没有被完全处理，然后重新发送给其他消费者（consumer）。这样，即使工作者（workers）偶尔的挂掉，也不会丢失消息。<br>
+消息是没有超时这个概念的；当工作者与它断开连的时候，RabbitMQ会重新发送消息。这样在处理一个耗时非常长的消息任务的时候就不会出问题了。<br>
+消息响应默认是开启的。在之前的例子中使用了no_ack=True标识把它关闭。是时候移除这个标识了，当工作者（worker）完成了任务，就发送一个响应。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">channel.BasicConsume(<span class="string">"hello"</span>, <span class="literal">false</span>, consumer);</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">var</span> ea = (BasicDeliverEventArgs)consumer.<span class="built_in">Queue</span>.Dequeue();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">var</span> body = ea.Body;</span><br><span class="line">    <span class="built_in">var</span> message = Encoding.UTF8.GetString(body);</span><br><span class="line"></span><br><span class="line">    int dots = message.Split(<span class="string">'.'</span>).Length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">Thread</span>.Sleep(dots * <span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">    Console.WriteLine(<span class="string">"Received &#123;0&#125;"</span>, message);</span><br><span class="line">    Console.WriteLine(<span class="string">"Done"</span>);</span><br><span class="line"></span><br><span class="line">    channel.BasicAck(ea.DeliveryTag, <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在,可以保证,即使正在处理消息的工作者被停掉,这些消息也不会丢失,所有没有被应答的消息会被重新发送给其他工作者.<br>
+一个很常见的错误就是忘掉了BasicAck这个方法,这个错误很常见,但是后果很严重. 当客户端退出时,待处理的消息就会被重新分发,但是RabitMQ会消耗越来越多的内存,因为这些没有被应答的消息不能够被释放。调试这种case，可以使用rabbitmqct打印messages_unacknoledged字段。<br>
+rabbitmqctl list_queues name messages_ready messages_unacknowledged<br>
+Listing queues …<br>
+hello    0       0<br>
+…done.</p>
+<h2><span id="消息持久化">消息持久化</span></h2>
+<p>前面已经搞定了即使消费者down掉，任务也不会丢失，但是，如果RabbitMQ Server停掉了，那么这些消息还是会丢失。<br>
+当RabbitMQ Server 关闭或者崩溃，那么里面存储的队列和消息默认是不会保存下来的。如果要让RabbitMQ保存住消息，需要在两个地方同时设置：需要保证队列和消息都是持久化的。<br>
+首先，要保证RabbitMQ不会丢失队列，所以要做如下设置：<br>
+bool durable = true;<br>
+channel.QueueDeclare(“hello”, durable, false, false, null);<br>
+虽然在语法上是正确的，但是在目前阶段是不正确的，因为我们之前已经定义了一个非持久化的hello队列。RabbitMQ不允许我们使用不同的参数重新定义一个已经存在的同名队列，如果这样做就会报错。现在，定义另外一个不同名称的队列：<br>
+bool durable = true;<br>
+channel.queueDeclare(“task_queue”, durable, false, false, null);<br>
+queueDeclare 这个改动需要在发送端和接收端同时设置。<br>
+现在保证了task_queue这个消息队列即使在RabbitMQ Server重启之后，队列也不会丢失。 然后需要保证消息也是持久化的， 这可以通过设置IBasicProperties.SetPersistent 为true来实现：<br>
+var properties = channel.CreateBasicProperties();<br>
+properties.SetPersistent(true);<br>
+需要注意的是，将消息设置为持久化并不能完全保证消息不丢失。虽然他告诉RabbitMQ将消息保存到磁盘上，但是在RabbitMQ接收到消息和将其保存到磁盘上这之间仍然有一个小的时间窗口。 RabbitMQ 可能只是将消息保存到了缓存中，并没有将其写入到磁盘上。持久化是不能够一定保证的，但是对于一个简单任务队列来说已经足够。如果需要消息队列持久化的强保证，可以使用publisher confirms</p>
+<h2><span id="公平分发">公平分发</span></h2>
+<p>你可能会注意到，消息的分发可能并没有如我们想要的那样公平分配。比如，对于两个工作者。当奇数个消息的任务比较重，但是偶数个消息任务比较轻时，奇数个工作者始终处理忙碌状态，而偶数个工作者始终处理空闲状态。但是RabbitMQ并不知道这些，他仍然会平均依次的分发消息。<br>
+为了改变这一状态，我们可以使用basicQos方法，设置perfetchCount=1 。这样就告诉RabbitMQ 不要在同一时间给一个工作者发送多于1个的消息，或者换句话说。在一个工作者还在处理消息，并且没有响应消息之前，不要给他分发新的消息。相反，将这条新的消息发送给下一个不那么忙碌的工作者。<br>
+channel.BasicQos(0, 1, false);</p>
+<h2><span id="完整实例">完整实例</span></h2>
+<p>现在将所有这些放在一起：<br>
+发送端代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">    factory.HostName = <span class="string">"localhost"</span>;</span><br><span class="line">    factory.UserName = <span class="string">"yy"</span>;</span><br><span class="line">    factory.Password = <span class="string">"hello!"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">using</span> (<span class="keyword">var</span> connection = factory.CreateConnection())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">using</span> (<span class="keyword">var</span> channel = connection.CreateModel())</span><br><span class="line">        &#123;</span><br><span class="line">                   </span><br><span class="line">            <span class="keyword">bool</span> durable = <span class="literal">true</span>;</span><br><span class="line">            channel.QueueDeclare(<span class="string">"task_queue"</span>, durable, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">null</span>);</span><br><span class="line">                    </span><br><span class="line">            <span class="keyword">string</span> message = GetMessage(args);</span><br><span class="line">            <span class="keyword">var</span> properties = channel.CreateBasicProperties();</span><br><span class="line">            properties.SetPersistent(<span class="literal">true</span>);</span><br><span class="line">                  </span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> body = Encoding.UTF8.GetBytes(message);</span><br><span class="line">            channel.BasicPublish(<span class="string">""</span>, <span class="string">"task_queue"</span>, properties, body);</span><br><span class="line">            Console.WriteLine(<span class="string">" set &#123;0&#125;"</span>, message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Console.ReadKey();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">string</span> <span class="title">GetMessage</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ((args.Length &gt; <span class="number">0</span>) ? <span class="keyword">string</span>.Join(<span class="string">" "</span>, args) : <span class="string">"Hello World!"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接收端代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> Main(string[] args)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="keyword">factory</span> = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">    <span class="keyword">factory</span>.HostName = <span class="string">"localhost"</span>;</span><br><span class="line">    <span class="keyword">factory</span>.UserName = <span class="string">"yy"</span>;</span><br><span class="line">    <span class="keyword">factory</span>.Password = <span class="string">"hello!"</span>;</span><br><span class="line"></span><br><span class="line">    using (<span class="keyword">var</span> connection = <span class="keyword">factory</span>.CreateConnection())</span><br><span class="line">    &#123;</span><br><span class="line">        using (<span class="keyword">var</span> channel = connection.CreateModel())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">bool</span> durable = <span class="keyword">true</span>;</span><br><span class="line">            channel.QueueDeclare(<span class="string">"task_queue"</span>, durable, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">            channel.BasicQos(<span class="number">0</span>, <span class="number">1</span>, <span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> consumer = <span class="keyword">new</span> QueueingBasicConsumer(channel);</span><br><span class="line">            channel.BasicConsume(<span class="string">"task_queue"</span>, <span class="keyword">false</span>, consumer);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> ea = (BasicDeliverEventArgs)consumer.Queue.Dequeue();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">var</span> body = ea.Body;</span><br><span class="line">                <span class="keyword">var</span> message = Encoding.UTF8.GetString(body);</span><br><span class="line"></span><br><span class="line">                <span class="built_in">int</span> dots = message.Split(<span class="string">'.'</span>).Length - <span class="number">1</span>;</span><br><span class="line">                Thread.Sleep(dots * <span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">                Console.WriteLine(<span class="string">"Received &#123;0&#125;"</span>, message);</span><br><span class="line">                Console.WriteLine(<span class="string">"Done"</span>);</span><br><span class="line"></span><br><span class="line">                channel.BasicAck(ea.DeliveryTag, <span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="管理界面">管理界面</span></h1>
+<hr>
+<p>RabbitMQ还有一个管理界面，通过该界面可以查看RabbitMQ Server 当前的状态，该界面是以插件形式提供的，并且在安装RabbitMQ的时候已经自带了该插件。需要做的是在RabbitMQ控制台界面中启用该插件，命令如下：<br>
+rabbitmq-plugins enable rabbitmq_management<br>
+<img src="18.png" alt="avatar"><br>
+现在，在浏览器中输入 http://server-name:15672/ server-name换成机器地址或者域名，如果是本地的，直接用localhost（RabbitMQ 3.0之前版本端口号为55672）在输入之后，弹出登录界面，使用我们之前创建的用户登录。<br>
+<img src="19.png" alt="avatar"><br>
+在该界面上可以看到当前RabbitMQServer的所有状态。</p>
+<h1><span id="总结">总结</span></h1>
+<hr>
+<p>本文简单介绍了消息队列的相关概念，并介绍了RabbitMQ消息代理的基本原理以及在Windows 上如何安装RabbitMQ和在.NET中如何使用RabbitMQ。消息队列在构建分布式系统和提高系统的可扩展性和响应性方面有着很重要的作用，希望本文对您了解消息队列以及如何使用RabbitMQ有所帮助。</p>
+<hr>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Place this tag where you want the button to render. -->
+<p>Please <a class="github-button" href="https://github.com/xyzko1/myblog" data-icon="octicon-star" aria-label="Star xyzko1/myblog on GitHub" target="_blank" rel="noopener">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/xyzko1" aria-label="Follow @xyzko1 on GitHub" target="_blank" rel="noopener">Follow</a> would also be appreciated!<br>
+Peace!</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/06/23/Quartz.NET实现作业调度/" data-toggle="tooltip" data-placement="top" title="Quartz.NET实现作业调度">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/04/14/分布式、集群、负载均衡、弹性、云计算、失效迁移/" data-toggle="tooltip" data-placement="top" title="分布式、集群、负载均衡、弹性、云计算、失效迁移">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">环境搭建</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">开始使用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Hello World</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">工作队列</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">消息响应</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">消息持久化</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">公平分发</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">完整实例</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">管理界面</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">总结</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Hexo" title="Hexo">Hexo</a>
+                        
+                          <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://beantech.org" target="_blank">Bean Tech</a></li>
+                    
+                        <li><a href="http://blog.kaijun.rocks" target="_blank">Kaijun&#39;s Blog</a></li>
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">It Helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "your-disqus-ID";
+    var disqus_identifier = "https://xyzko1.github.io/2019/05/01/RabbitMq.net使用/";
+    var disqus_url = "https://xyzko1.github.io/2019/05/01/RabbitMq.net使用/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/xyzko1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/xyzko1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/xyzko1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; xyzko1 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://xyzko1.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://xyzko1.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

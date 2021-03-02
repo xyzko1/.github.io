@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Linq入门详解 - xyzko1 | 博客
+        
+    </title>
+
+    <link rel="canonical" href="https://xyzko1.github.io/2019/07/21/Linq入门详解/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('Demo.png')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Hexo" title="Hexo">Hexo</a>
+                            
+                              <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                            
+                        </div>
+                        <h1>Linq入门详解</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by xyzko1 on
+                            2019-07-21
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">xyz的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>created by <a href="https://github.com/xyzko1/xyzko1.github.io" target="_blank" rel="noopener">xyzko1</a><br>
+2019年07月21日 19:00:00</p>
+</blockquote>
+<p>本博文详细介绍 .NET 3.5 中引入的重要功能：Language Integrated Query（LINQ，语言集成查询）。通过LINQ，我们可以使用相同API操作不同的数据源。接下来就让我们看看LINQ是什么以及如何使用？</p>
+<h1><span id="相关技术">相关技术</span></h1>
+<h2><span id="隐式类型-匿名类型-对象初始化器">隐式类型、匿名类型、对象初始化器</span></h2>
+<h3><span id="隐式类型">隐式类型</span></h3>
+<p>使用var关键字创建，C#编译器会根据用于初始化局部变量的初始值推断出变量的数据类型。（不过我个人认为，能用具体类型的地方尽量不要用var关键字，因为这样会让你遗忘“被封装类库”方法的返回值类型–有损可读性）<br>
+隐式类型使用限制：<br>
+a)        隐式类型只能应用于方法或者属性内局部变量的声明，不能使用var来定义返回值、参数的类型或类型的数据成员。<br>
+b)       使用var进行声明的局部变量必须赋初始值，并且不能以null作为初始值。</p>
+<h3><span id="匿名类型">匿名类型</span></h3>
+<p>只是一个继承了Object的、没有名称的类。C#编译器会在编译时自动生成名称唯一的类。</p>
+<h3><span id="对象初始化器">对象初始化器</span></h3>
+<p>提供一种非常简洁的方式来创建对象和为对象的属性赋值。（相关还有“集合初始化器”）<br>
+由于C#强类型语言，即我们在声明变量时必须指定变量的具体类型。所以在创建匿名对象时，需要结合隐式类型、匿名类型、对象初始化器一起创建匿名对象。（避免类型转换）<br>
+示例：<br>
+var person = new { name = “heyuquan” , age = 24 }</p>
+<h2><span id="lambda表达式func委托">Lambda表达式，Func委托</span></h2>
+<h3><span id="lambda表达式只是用更简单的方式来书写匿名方法从而彻底简化net委托类型的使用">Lambda表达式只是用更简单的方式来书写匿名方法，从而彻底简化.NET委托类型的使用。</span></h3>
+<p>Lambda表达式在C#中的写法是“arg-list =&gt; expr-body”，“=&gt;”符号左边为表达式的参数列表，右边则是表达式体（body）。参数列表可以包含0到多个参数，参数之间使用逗号分割。</p>
+<h3><span id="func委托">Func委托</span></h3>
+<p>Func委托，是微软为我们预定义的常用委托，封装一个具有：零个或多个指定类型的输入参数并返回一个指定类型的结果值的方法。<br>
+<img src="1.png" alt="avatar"><br>
+示例：</p>
+<figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">static void Main(<span class="built_in">string</span>[] args)    &#123;        // 委托函数        Func&lt;<span class="built_in">string</span>, <span class="built_in">string</span>, <span class="built_in">string</span>&gt; func1 = Hello;        // 匿名方法        Func&lt;<span class="built_in">string</span>, <span class="built_in">string</span>, <span class="built_in">string</span>&gt; func2 =            delegate(<span class="built_in">string</span> a, <span class="built_in">string</span> b)             &#123;                 <span class="keyword">return</span> <span class="string">"欢迎光临我的博客"</span> + Environment.NewLine + a + <span class="string">" "</span> + b;             &#125;;        // Lambda表达式        Func&lt;<span class="built_in">string</span>, <span class="built_in">string</span>, <span class="built_in">string</span>&gt; func3 =            <span class="function"><span class="params">(a, b)</span> =&gt;</span> &#123; <span class="keyword">return</span> <span class="string">"欢迎光临我的博客"</span> + Environment.NewLine + a + <span class="string">" "</span> + b; &#125;;         // 调用Func委托        <span class="built_in">string</span> helloStr = func2(<span class="string">"滴答的雨"</span>, @<span class="string">"http://www.cnblogs.com/heyuquan/"</span>);         Console.WriteLine(helloStr);&#125;    static <span class="built_in">string</span> Hello(<span class="built_in">string</span> a, <span class="built_in">string</span> b)    &#123;        <span class="keyword">return</span> <span class="string">"欢迎光临我的博客"</span> + Environment.NewLine + a + <span class="string">" "</span> + b;     &#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="扩展方法">扩展方法</span></h2>
+<p>1、 扩展方法声明在静态类中，定义为一个静态方法，其第一个参数需要使用this关键字标识，指示它所扩展的类型。<br>
+2、扩展方法可以将方法写入最初没有提供该方法的类中。还可以把方法添加到实现某个接口的任何类中，这样多个类就可以使用相同的实现代码。（LINQ中，System.Linq.Queryable.cs和System.Linq.Enumerable.cs 正是对接口添加扩展方法）<br>
+3、扩展方法虽定义为一个静态方法，但其调用时不必提供定义静态方法的类名，只需引入对应的命名空间，访问方式同实例方法。<br>
+4、扩展方法不能访问它所扩展的类型的私有成员。<br>
+示例：</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static IEnumerable<span class="xml"><span class="tag">&lt;<span class="name">TSource</span>&gt;</span> MyWhere</span><span class="xml"><span class="tag">&lt;<span class="name">TSource</span>&gt;</span>(    this IEnumerable</span><span class="xml"><span class="tag">&lt;<span class="name">TSource</span>&gt;</span> source, Func<span class="tag">&lt;<span class="name">TSource,</span> <span class="attr">bool</span>&gt;</span> predicate)</span><span class="xquery">&#123;    foreach (TSource <span class="type">item</span> <span class="keyword">in</span> source)    &#123;        <span class="keyword">if</span> (predicate(<span class="type">item</span>))            yield <span class="keyword">return</span> <span class="type">item</span>;    &#125;</span><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2><span id="yield迭代器延迟计算">Yield迭代器，延迟计算</span></h2>
+<h3><span id="yield迭代器">Yield迭代器</span></h3>
+<p>在上面定义的MyWhere扩展方法中，我们使用了yield迭代器。使我们不必“显示”实现IEnumerable或IEnumerator接口。只需要简单的使用 yield 关键字，由 JIT 编译器帮我们编译成实现 IEnumerable或IEnumerator 接口的对象（即：本质还是传统遍历，只是写法上非常简洁），就能使用foreach进行遍历。<br>
+请详看：《C#稳固基础：传统遍历与迭代器》，通过这篇博文我们可以学会如何实现foreach遍历以及foreach执行遍历的详细过程如下图所示：<br>
+<img src="2.png" alt="avatar"></p>
+<h3><span id="延迟计算lazy-evaluation">延迟计算（Lazy evaluation）</span></h3>
+<p>a)        定义：来源自函数式编程，在函数式编程里，将函数作为参数来传递，传递过程中不会执行函数内部耗时的计算，直到需要这个计算结果的时候才调用，这样就可以因为避免一些不必要的计算而改进性能。<br>
+b)        Yield迭代器的延迟计算原理：JIT 编译器会帮助我们将迭代主体编译到IEnumerator.MoveNext()方法中。从上图foreach的执行流程来看，迭代主体是在每次遍历执行到 in的时候才会调用MoveNext()，所以其迭代器耗时的指令是延迟计算的。<br>
+c)        LINQ查询的延迟计算原理：通过给LINQ扩展方法传递方法委托，作为yield迭代器的主体，让遍历执行到MoveNext()时才执行耗时的指令。</p>
+<h2><span id="表达式树">表达式树</span></h2>
+<p>表达式树：表达式树允许在运行期间建立对数据源的查询，因为表达式树存储在程序集中。（后续在Linq to entities博文中与Queryable一起解说）</p>
+<h1><span id="language-integrated-querylinq语言集成查询">Language Integrated Query（LINQ，语言集成查询）</span></h1>
+<p><img src="3.png" alt="avatar"></p>
+<pre><code> 从这幅图中，我们可以知道LINQ包括五个部分：LINQ to Objects、LINQ to XML、LINQ to SQL、LINQ to DataSet、LINQ to Entities。
+</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>程序集</th>
+<th>命名空间</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LINQ to Objects</td>
+<td>System.Core.dll</td>
+<td>System.Linq</td>
+<td>提供对内存中集合操作的支持</td>
+</tr>
+<tr>
+<td>LINQ to XML</td>
+<td>System.Xml.Linq.dll</td>
+<td>System.Xml.Linq</td>
+<td>提供对XML数据源的操作的支持</td>
+</tr>
+<tr>
+<td>LINQ to SQL</td>
+<td>System.Data.Linq.dll</td>
+<td>System.Data.Linq</td>
+<td>提供对Sql Server数据源操作的支持。（微软已宣布不再更新，推荐使用LINQ to Entities）</td>
+</tr>
+<tr>
+<td>LINQ to DataSet</td>
+<td>System.Data.DataSetExtensions.dll</td>
+<td>System.Data</td>
+<td>提供对离线数据操作的支持。</td>
+</tr>
+<tr>
+<td>LINQ to Entities</td>
+<td>System.Core.dll 和System.Data.Entity.dll</td>
+<td>System.Linq 和System.Data.Objects</td>
+<td>LINQ to Entities 是 Entity Framework 的一部分并且取代LINQ to SQL 作为在数据库上使用 LINQ 的标准机制。（Entity Framework 是由微软发布的开源对象-关系映射（ORM）框架，支持多种数据库。）</td>
+</tr>
+</tbody>
+</table>
+<p>目前，还可以下载其他第三方提供程序，例如LINQ to JSON、LINQ to MySQL、LINQ to Amazon、LINQ to Flickr和LINQ to SharePoint。无论使用什么数据源，都可以通过LINQ使用相同的API进行操作。</p>
+<h2><span id="怎样区分linq操作时使用的是哪个linq提供程序">怎样区分LINQ操作时，使用的是哪个LINQ提供程序？</span></h2>
+<p>LINQ提供程序的实现方案是：根据命名空间和第一个参数的类型来选择的。实现扩展方法的类的命名空间必须是打开的，否则扩展类就不在作用域内。Eg：在LINQ to Objects中定义的 Where() 方法参数和在 LINQ to Entities中定义的 Where() 方法实现是不同。</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// LINQ <span class="keyword">to</span> Objects：public static class Enumerable&#123;    public static IEnumerable<span class="variable">&lt;TSource&gt;</span> Where<span class="variable">&lt;TSource&gt;</span>(        this IEnumerable<span class="variable">&lt;TSource&gt;</span> source, Func<span class="variable">&lt;TSource, bool&gt;</span> predicate);&#125; // LINQ <span class="keyword">to</span> Entitiespublic static class Queryable&#123;    public static IQueryable<span class="variable">&lt;TSource&gt;</span> Where<span class="variable">&lt;TSource&gt;</span>(        this IQueryable<span class="variable">&lt;TSource&gt;</span> source, Expression<span class="variable">&lt;Func&lt;TSource, bool&gt;</span>&gt; predicate);&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="linq查询提供几种操作语法">LINQ查询提供几种操作语法？</span></h2>
+<p>LINQ查询时有两种语法可供选择：查询表达式（Query Expression）和方法语法（Fluent Syntax）。<br>
+.NET公共语言运行库（CLR）并不具有查询表达式的概念。所以，编译器会在程序编译时把查询表达式转换为方法语法，即对扩展方法的调用。所以使用方法语法会让我们更加接近和了解LINQ的实现和本质，并且一些查询只能表示为方法调用。但另一方面，查询表达式通常会比较简单和易读。不管怎样，这两种语法是互相补充和兼容的，我们可以在一个查询中混合使用查询表达式和方法语法。</p>
+<p>以下扩展方法存在对应的查询表达式关键字：Where、Select、SelectMany、OrderBy、ThenBy、OrderByDescending、ThenByDescending、GroupBy、Join、GroupJoin。</p>
+<h2><span id="linq查询表达式">LINQ查询表达式</span></h2>
+<table>
+<thead>
+<tr>
+<th>约束</th>
+<th>LINQ查询表达式必须以from子句开头，以select或group子句结束。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>关键字</td>
+<td>功能</td>
+</tr>
+<tr>
+<td>from…in…</td>
+<td>指定要查找的数据源以及范围变量，多个from子句则表示从多个数据源查找数据。注意：c#编译器会把“复合from子句”的查询表达式转换为SelectMany()扩展方法。</td>
+</tr>
+<tr>
+<td>join…in…on…equals…</td>
+<td>指定多个数据源的关联方式</td>
+</tr>
+<tr>
+<td>let</td>
+<td>引入用于存储查询表达式中子表达式结果的范围变量。通常能达到层次感会更好，使代码更易于阅读。</td>
+</tr>
+<tr>
+<td>orderby、descending</td>
+<td>指定元素的排序字段和排序方式。当有多个排序字段时，由字段顺序确定主次关系，可指定升序和降序两种排序方式</td>
+</tr>
+<tr>
+<td>where</td>
+<td>指定元素的筛选条件。多个where子句则表示了并列条件，必须全部都满足才能入选。每个where子句可以使用谓词&amp;&amp;、</td>
+</tr>
+<tr>
+<td>group</td>
+<td>指定元素的分组字段。</td>
+</tr>
+<tr>
+<td>select</td>
+<td>指定查询要返回的目标数据，可以指定任何类型，甚至是匿名类型。（目前通常被指定为匿名类型）</td>
+</tr>
+<tr>
+<td>into</td>
+<td>提供一个临时的标识符。该标识可以引用join、group和select子句的结果。1)        直接出现在join子句之后的into关键字会被翻译为GroupJoin。（into之前的查询变量可以继续使用）2)        select或group子句之后的into它会重新开始一个查询，让我们可以继续引入where, orderby和select子句，它是对分步构建查询表达式的一种简写方式。（into之前的查询变量都不可再使用）</td>
+</tr>
+</tbody>
+</table>
+<p>书写模版如下：<br>
+<img src="4.png" alt="avatar"></p>
+<p>下面以 LINQ to Objects 为例，介绍LINQ中的各种查询。</p>
+<h1><span id="linq-to-objects">LINQ to Objects</span></h1>
+<p>LINQ to Objects 提供对内存中集合操作的支持，由程序集System.Core.dll中System.Linq命名空间下的Enumerable静态类提供。</p>
+<p>运算符图解：<br>
+<img src="5.png" alt="avatar"></p>
+<h2><span id="示例业务背景介绍">示例业务背景介绍</span></h2>
+<p>示例参考《C#高级编程（第六版）》LINQ章节（P267 - P296），进行改编。<br>
+打开示例代码我们看到：<br>
+![avatar]6.png)</p>
+<p>1.Racer.cs 文件，定义一级方程式世界车手冠军信息。<br>
+2.Team.cs 文件，定义一级方程式世界车队冠军信息。<br>
+3.Formula1.cs 文件，包含两个重要静态方法：（F1是&quot;Formula One&quot;的缩写）</p>
+<ol>
+<li>GetChampions()：返回一组车手列表。这个列表包含了1950到2007年之间的所有一级方程式世界车手冠军。</li>
+<li>GetContructorChampions()：返回一组车队列表。这个列表包含了1985到2007年之间的所有一级方程式世界车队冠军，车队冠军是从1985年开始设立的（是由国际汽车联合会颁发给一个赛季内最成功的一级方程式车队的奖励）。</li>
+</ol>
+<h2><span id="各种linq示例">各种LINQ示例</span></h2>
+<h3><span id="过滤操作符">过滤操作符</span></h3>
+<p>根据条件返回匹配元素的集合IEnumerable<t>。<br>
+1、Where：根据返回bool值的Func委托参数过滤元素。<br>
+业务说明：查询获得车手冠军次数大于15次且是Austria国家的一级方程式赛手</t></p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查询表达式     var racer = from r in Formula1.GetChampions() </span></span><br><span class="line"><span class="keyword">where</span> r.Wins &gt; <span class="number">15</span> &amp;&amp; r.Country == <span class="string">"Austria"</span></span><br><span class="line"><span class="keyword">select</span> r;<span class="comment">// 方法语法    </span></span><br><span class="line"><span class="built_in">var</span> racer = Formula1.GetChampions().<span class="keyword">Where</span>(r =&gt; r.Wins &gt; <span class="number">15</span></span><br><span class="line">&amp;&amp; r.Country == <span class="string">"Austria"</span>);</span><br></pre></td></tr></table></figure>
+<p>2、OfType<tresult>：接收一个非泛型的IEnumerable集合，根据OfType泛型类型参数过滤元素，只返回TResult类型的元素。<br>
+业务说明：过滤object数组中的元素，返回字符串类型的数组。</tresult></p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">object</span>[] <span class="meta">data</span> = &#123; <span class="string">"one"</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="string">"four"</span>, <span class="string">"five"</span>, <span class="number">6</span> &#125;<span class="comment">;</span></span><br><span class="line"><span class="symbol">var</span> query = <span class="meta">data</span>.OfType&lt;<span class="keyword">string&gt;(); </span>// <span class="string">"one"</span>, <span class="string">"four"</span>, <span class="string">"five"</span></span><br></pre></td></tr></table></figure>
+<p>3、 Distinct：删除序列中重复的元素。</p>
+<h3><span id="投影操作符">投影操作符</span></h3>
+<p>1、Select 将序列的每个元素经过lambda表达式处理后投影到一个新类型元素上。（与SelectMany不同在于，若单个元素投影到IEnumerable<tresult>，Select不会对多个IEnumerable<tresult>进行合并）<br>
+API：</tresult></tresult></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public static IEnumerable<span class="tag">&lt;<span class="name">TResult</span>&gt;</span> Select<span class="tag">&lt;<span class="name">TSource,</span> <span class="attr">TResult</span>&gt;</span></span><br><span class="line">(this IEnumerable<span class="tag">&lt;<span class="name">TSource</span>&gt;</span> source, Func<span class="tag">&lt;<span class="name">TSource,</span> <span class="attr">TResult</span>&gt;</span> selector);</span><br></pre></td></tr></table></figure>
+<p>2、SelectMany<br>
+a)        c#编译器会把“复合from子句”的查询表达式转换为SelectMany()扩展方法。<br>
+b)        将序列的每个元素经过lambda表达式处理后投影到一个 IEnumerable<tresult>，再将多个IEnumerable<tresult>序列合并为一个返回序列IEnumerable<tresult>。</tresult></tresult></tresult></p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public static IEnumerable<span class="variable">&lt;TResult&gt;</span> SelectMany<span class="variable">&lt;TSource, TResult&gt;</span></span><br><span class="line">(this IEnumerable<span class="variable">&lt;TSource&gt;</span> source, Func<span class="variable">&lt;TSource, IEnumerable&lt;TResult&gt;</span>&gt; selector);  </span><br><span class="line">//示例</span><br><span class="line">string[] fullNames = &#123; <span class="string">"Anne Williams"</span>, <span class="string">"John Fred Smith"</span>, <span class="string">"Sue Green"</span> &#125;;    </span><br><span class="line">IEnumerable<span class="variable">&lt;string&gt;</span> query = fullNames.SelectMany(name =&gt; name.Split());   </span><br><span class="line">foreach (string name in query)      </span><br><span class="line">Console.Write(name + <span class="string">"|"</span>);    // Anne|<span class="string">Williams</span>|<span class="string">John</span>|<span class="string">Fred</span>|<span class="string">Smith</span>|<span class="string">Sue</span>|<span class="string">Green</span>|<span class="string">   </span></span><br><span class="line"><span class="string">//如果使用Select，则需要双重循环。  </span></span><br><span class="line"><span class="string">IEnumerable&lt;string[]&gt; query = fullNames.Select(name =&gt; name.Split());  </span></span><br><span class="line"><span class="string">foreach (string[] stringArray in query)      </span></span><br><span class="line"><span class="string">foreach (string name in stringArray)         </span></span><br><span class="line"><span class="string">Console.Write(name + "</span>|<span class="string">");    // Anne</span>|<span class="string">Williams</span>|<span class="string">John</span>|<span class="string">Fred</span>|<span class="string">Smith</span>|<span class="string">Sue</span>|<span class="string">Green</span>|</span><br></pre></td></tr></table></figure>
+<p>c)        将序列的每个元素经过lambda表达式处理后投影到一个 IEnumerable<tcollection>，再将多个IEnumerable<tcollection>序列合并为一个返回序列IEnumerable<tcollection>，并对其中每个元素调用结果选择器函数。</tcollection></tcollection></tcollection></p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static IEnumerable<span class="variable">&lt;TResult&gt;</span> SelectM<span class="literal">any</span><span class="variable">&lt;TSource,TCollection,TResult&gt;</span>(this IEnumerable<span class="variable">&lt;TSource&gt;</span> source,Func<span class="variable">&lt;TSource, IEnumerable&lt;TCollection&gt;</span>&gt; collectionSelector,Func<span class="variable">&lt;TSource,TCollection,TResult&gt;</span> resultSelector);</span><br></pre></td></tr></table></figure>
+<p>示例：<br>
+业务说明：（Racer类定义了一个属性Cars，Cars是一个字符串数组。）过滤驾驶Ferrari的所有冠军</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查询表达式 var ferrariDrivers = from r in Formula1.GetChampions() </span></span><br><span class="line"><span class="keyword">from</span> c <span class="keyword">in</span> r.Cars where c == <span class="string">"Ferrari"</span>  orderby r.LastName</span><br><span class="line">select r.FirstName + <span class="string">" "</span> + r.LastName;<span class="comment">// 方法语法    </span></span><br><span class="line"><span class="keyword">var</span> ferrariDrivers = Formula1.GetChampions()</span><br><span class="line">.SelectMany(<span class="function"><span class="params">r</span> =&gt;</span> r.Cars,<span class="function">(<span class="params">r, c</span>)=&gt;</span> <span class="keyword">new</span> &#123; Racer = r,Car = c &#125;).Where(<span class="function"><span class="params">r</span> =&gt;</span> r.Car == <span class="string">"Ferrari"</span>)</span><br><span class="line">.OrderBy(<span class="function"><span class="params">r</span> =&gt;</span> r.Racer.LastName)</span><br><span class="line">.Select(<span class="function"><span class="params">r</span> =&gt;</span>r.Racer.FirstName + <span class="string">" "</span> + r.Racer.LastName);</span><br></pre></td></tr></table></figure>
+<h3><span id="排序操作符">排序操作符</span></h3>
+<p>1、 OrderBy&lt;TSource,TKey&gt;，OrderByDescending&lt;TSource,TKey&gt;：根据指定键按升序或降序对集合进行第一次排序，输出IOrderedEnumerable<tsource>。<br>
+2、ThenBy&lt;TSource,TKey&gt;，ThenByDescending&lt;TSource,TKey&gt;：只会对那些在前一次排序中拥有相同键值的elements重新根据指定键按升序或降序排序。输入IOrderedEnumerable <tsource>。<br>
+业务说明：获取车手冠军列表，并依次按照Country升序、LastName降序、FirstName升序进行排序。</tsource></tsource></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查询表达式  var racers = from r in Formula1.GetChampions()</span></span><br><span class="line">orderby r.Country, r.LastName descending, r.FirstName</span><br><span class="line">select r;<span class="comment">// 方法语法    </span></span><br><span class="line"><span class="keyword">var</span> racers = Formula1.GetChampions()</span><br><span class="line">.OrderBy(<span class="function"><span class="params">r</span> =&gt;</span> r.Country)</span><br><span class="line">.ThenByDescending(<span class="function"><span class="params">r</span> =&gt;</span> r.LastName)</span><br><span class="line">.ThenBy(<span class="function"><span class="params">r</span> =&gt;</span> r.FirstName);</span><br></pre></td></tr></table></figure>
+<p>3、Reverse<tsource>：反转集合中所有元素的顺序。</tsource></p>
+<h3><span id="连接操作符">连接操作符</span></h3>
+<p>先准备两个集合，如下：（racers表示在1958到1965年间获得车手冠军的信息列表；teams表示在1958到1965年间获得车队冠军的信息列表）</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> racers = <span class="keyword">from</span> r <span class="keyword">in</span> Formula1.GetChampions()</span><br><span class="line"><span class="keyword">from</span> y <span class="keyword">in</span> r.Years</span><br><span class="line">where y &gt; <span class="number">1958</span> &amp;&amp; y &lt; <span class="number">1965</span></span><br><span class="line">select <span class="keyword">new</span>&#123;Year=y, Name = r.FirstName + <span class="string">" "</span> + r.LastName&#125;; </span><br><span class="line"><span class="keyword">var</span> teams = Formula1.GetContructorChampions()    </span><br><span class="line">.SelectMany(<span class="function"><span class="params">y</span> =&gt;</span> y.Years, <span class="function">(<span class="params">t, y</span>) =&gt;</span> <span class="keyword">new</span> &#123; Year = y, Name = t.Name &#125;)    </span><br><span class="line">.Where(<span class="function"><span class="params">ty</span> =&gt;</span> ty.Year &gt; <span class="number">1958</span> &amp;&amp; ty.Year &lt; <span class="number">1965</span>);</span><br></pre></td></tr></table></figure>
+<p>注意：join…on…关键字后的相等使用equals关键字。</p>
+<p>1、Join：基于匹配键对两个序列的元素进行关联。<br>
+API:g</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static IEnumerable<span class="tag">&lt;<span class="name">TResult</span>&gt;</span> Join<span class="tag">&lt;<span class="name">TOuter,</span> <span class="attr">TInner</span>, <span class="attr">TKey</span>, <span class="attr">TResult</span>&gt;</span>(this IEnumerable<span class="tag">&lt;<span class="name">TOuter</span>&gt;</span> outer,IEnumerable<span class="tag">&lt;<span class="name">TInner</span>&gt;</span> inner,Func<span class="tag">&lt;<span class="name">TOuter,</span> <span class="attr">TKey</span>&gt;</span> outerKeySelector,Func<span class="tag">&lt;<span class="name">TInner,</span> <span class="attr">TKey</span>&gt;</span> innerKeySelector,Func<span class="tag">&lt;<span class="name">TOuter,</span> <span class="attr">TInner</span>,<span class="attr">TResult</span>&gt;</span> resultSelector);</span><br></pre></td></tr></table></figure>
+<p>业务说明：返回1958到1965年间的车手冠军和车队冠军信息，根据年份关联</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  查询表达式var racersAndTeams = from r in racers</span></span><br><span class="line"><span class="built_in">join</span> t <span class="built_in">in</span> <span class="built_in">teams</span> on r.Year equals t.Year</span><br><span class="line"><span class="built_in">select</span> new&#123; Year=r.Year,Racer =r.<span class="built_in">Name</span>,Team=t.<span class="built_in">Name</span>&#125;; <span class="comment">// 方法语法</span></span><br><span class="line">var racersAndTeams = racers.<span class="built_in">Join</span>(<span class="built_in">teams</span>,r=&gt;r.Year,t=&gt;t.Year, </span><br><span class="line">(r, t) =&gt; new &#123;Year=r.Year,Racer=r.<span class="built_in">Name</span>,Team=t.<span class="built_in">Name</span>&#125;);</span><br></pre></td></tr></table></figure>
+<p>2、GroupJoin：基于键相等对两个序列的元素进行关联并对结果进行分组。常应用于返回“主键对象-外键对象集合”形式的查询。<br>
+API：</p>
+<figure class="highlight bnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static IEnumerable<span class="attribute">&lt;TResult&gt;</span> GroupJoin<span class="attribute">&lt;TOuter, TInner, TKey, TResult&gt;</span>(this IEnumerable<span class="attribute">&lt;TOuter&gt;</span> outer,IEnumerable<span class="attribute">&lt;TInner&gt;</span> inner,Func<span class="attribute">&lt;TOuter, TKey&gt;</span> outerKeySelector,Func<span class="attribute">&lt;TInner, TKey&gt;</span> innerKeySelector,Func<span class="attribute">&lt;TOuter, IEnumerable&lt;TInner&gt;</span>, TResult&gt;resultSelector);</span><br></pre></td></tr></table></figure>
+<p>业务说明：返回1958到1965年间的车手冠军和车队冠军信息，根据年份关联并分组<br>
+注意：直接出现在join子句之后的into关键字会被翻译为GroupJoin，而在select或group子句之后的into表示继续一个查询。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查询表达式    var racersAndTeams = from r in racers                         </span></span><br><span class="line">join t <span class="keyword">in</span> teams on r.Year equals t.Year                        </span><br><span class="line">into groupTeams                        </span><br><span class="line">select <span class="keyword">new</span>&#123;Year = r.Year,Racer = r.Name,GroupTeams = groupTeams&#125;; </span><br><span class="line"><span class="keyword">var</span> racersAndTeams = racers       </span><br><span class="line">.GroupJoin(teams ,<span class="function"><span class="params">r</span>=&gt;</span>r.Year,<span class="function"><span class="params">t</span>=&gt;</span>t.Year, </span><br><span class="line">(r, t)=&gt;<span class="keyword">new</span> &#123;Year=r.Year,Racer=r.Name,GroupTeams=t&#125;);</span><br></pre></td></tr></table></figure>
+<p>3、join…on…equals…支持多个键关联<br>
+可以使用匿名类型来对多个键值进行Join，如下所示：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> x <span class="keyword">in</span> sequenceX</span><br><span class="line"><span class="keyword">join</span> y <span class="keyword">in</span> sequenceY <span class="keyword">on</span> <span class="keyword">new</span> &#123; K1 = x.Prop1, K2 = x.Prop2 &#125;</span><br><span class="line"><span class="keyword">equals</span> <span class="keyword">new</span> &#123; K1 = y.Prop3, K2 = y.Prop4 &#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>两个匿名类型的结构必须完全一致，这样编译器会把它们对应到同一个实现类型，从而使连接键值彼此兼容。<br>
+4、 Join与GroupJoin结果集对比（为了实现此业务，将1959年设置了两个车队冠军）<br>
+<img src="7.png" alt="avatar"></p>
+<h3><span id="分组操作符">分组操作符</span></h3>
+<p>1、返回值为 IEnumerable&lt;IGrouping&lt;TKey, TSource&gt;&gt; ，根据指定的键选择器函数对序列中的元素进行分组。<br>
+业务说明：按城市分组，获取每个城市的车手冠军。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查询表达式 var countries = from r in Formula1.GetChampions()                </span></span><br><span class="line"><span class="keyword">group</span> r <span class="keyword">by</span> r.Country <span class="keyword">into</span> g                </span><br><span class="line"><span class="keyword">select</span> <span class="literal">new</span> &#123; Country = g.Key, Racers = g &#125;;<span class="comment">// 方法语法</span></span><br><span class="line"><span class="built_in">var</span> countries = Formula1.GetChampions()    </span><br><span class="line">.GroupBy(r =&gt; r.Country)   </span><br><span class="line">.<span class="keyword">Select</span>(g =&gt; <span class="literal">new</span> &#123; Country = g.Key, Racer = g &#125;);</span><br></pre></td></tr></table></figure>
+<p>2、返回值为 IEnumerable<tresult>，根据指定的键选择器函数对序列中的元素进行分组，并且从每个组及其键中创建结果值。<br>
+业务说明：按城市分组，获取每个城市的车手冠军。</tresult></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法语法   （等价上面两种方式）</span></span><br><span class="line"><span class="keyword">var</span> countries = Formula1.GetChampions()     </span><br><span class="line">.GroupBy(<span class="function"><span class="params">r</span> =&gt;</span>r.Country, <span class="function">(<span class="params">k, g</span>)=&gt;</span><span class="keyword">new</span>&#123;Country=k,Racer=g&#125;);</span><br></pre></td></tr></table></figure>
+<h3><span id="量词操作符">量词操作符</span></h3>
+<p>如果元素序列满足指定的条件，量词操作符就返回布尔值。<br>
+1、Any：确定序列是否包含任何元素；或确定序列中的任何元素是否都满足条件。<br>
+2、All：确定序列中的所有元素是否满足条件。<br>
+3、Contains：确定序列是否包含指定的元素。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取是否存在姓为“Schumacher”的车手冠军</span></span><br><span class="line"><span class="keyword">var</span> hasRacer_Schumacher = Formula1.GetChampions()   </span><br><span class="line">.Any(<span class="function"><span class="params">r</span> =&gt;</span> r.LastName == <span class="string">"Schumacher"</span>);</span><br></pre></td></tr></table></figure>
+<h3><span id="分区操作符">分区操作符</span></h3>
+<p>添加在查询的“最后”，返回集合的一个子集。<br>
+1、Take：从序列的开头返回指定数量的连续元素。<br>
+2、TakeWhile：只要满足指定的条件，就会返回序列的元素。<br>
+3、Skip：跳过序列中指定数量的元素，然后返回剩余的元素。<br>
+4、 SkipWhile：只要满足指定的条件，就跳过序列中的元素，然后返回剩余元素。</p>
+<p>业务说明：将车手冠军列表按每页5个名字进行分页。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Paging</span>(<span class="params"></span>)</span>&#123;    </span><br><span class="line"><span class="keyword">int</span> pageSize = <span class="number">5</span>;     </span><br><span class="line"><span class="keyword">int</span> numberPages =(<span class="keyword">int</span>)Math.Ceiling(Formula1.GetChampions().Count()/(<span class="keyword">double</span>)pageSize);     </span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> page=<span class="number">0</span>;page&lt;numberPages;page++)    </span><br><span class="line">&#123;</span><br><span class="line">Console.WriteLine(<span class="string">"Page &#123;0&#125;"</span>, page);         </span><br><span class="line"><span class="keyword">var</span> racers = (<span class="keyword">from</span> r <span class="keyword">in</span> Formula1.GetChampions()                     </span><br><span class="line"><span class="keyword">orderby</span> r.LastName                      </span><br><span class="line"><span class="keyword">select</span> r.FirstName + <span class="string">" "</span> + r.LastName)                     </span><br><span class="line">.Skip(page * pageSize).Take(pageSize);         </span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">var</span> name <span class="keyword">in</span> racers)</span><br><span class="line">&#123;</span><br><span class="line">Console.WriteLine(name);</span><br><span class="line">&#125;</span><br><span class="line">Console.WriteLine();</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="集合操作符">集合操作符</span></h3>
+<p>1、Union：并集，返回两个序列的并集，去掉重复元素。<br>
+2、Concat：并集，返回两个序列的并集。<br>
+3、 Intersect：交集，返回两个序列中都有的元素，即交集。<br>
+4、 Except：差集，返回只出现在一个序列中的元素，即差集。</p>
+<p>业务说明：获取使用车型”Ferrari”和车型”Mclaren”都获得过车手冠军车手列表</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Func&lt;<span class="keyword">string</span>, IEnumerable&lt;Racer&gt;&gt; racersByCar=Car=&gt;<span class="keyword">from</span> r <span class="keyword">in</span> Formula1.GetChampions()           </span><br><span class="line"><span class="keyword">from</span> c <span class="keyword">in</span> r.Cars           </span><br><span class="line"><span class="keyword">where</span> c == Car           </span><br><span class="line"><span class="keyword">orderby</span> r.LastName           </span><br><span class="line"><span class="keyword">select</span> r; <span class="keyword">foreach</span> (<span class="function"><span class="keyword">var</span> racer <span class="keyword">in</span> <span class="title">racersByCar</span>(<span class="params"><span class="string">"Ferrari"</span></span>)   </span></span><br><span class="line"><span class="function">.<span class="title">Intersect</span>(<span class="params">racersByCar(<span class="string">"McLaren"</span></span>)))</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">Console.WriteLine(racer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>5、Zip：通过使用指定的委托函数合并两个序列，集合的总个数不变。<br>
+API：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static IEnumerable<span class="tag">&lt;<span class="name">TResult</span>&gt;</span> Zip<span class="tag">&lt;<span class="name">TFirst,</span> <span class="attr">TSecond</span>, <span class="attr">TResult</span>&gt;</span>(this IEnumerable<span class="tag">&lt;<span class="name">TFirst</span>&gt;</span> first,IEnumerable<span class="tag">&lt;<span class="name">TSecond</span>&gt;</span> second,Func<span class="tag">&lt;<span class="name">TFirst,TSecond,TResult</span>&gt;</span>resultSelector);</span><br></pre></td></tr></table></figure>
+<p>示例：合并html开始标签和结束标签</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">string[] <span class="keyword">start</span> = &#123;<span class="string">"&lt;html&gt;"</span>,<span class="string">"&lt;head&gt;"</span>,<span class="string">"&lt;body&gt;"</span> &#125;;</span><br><span class="line">string[] <span class="keyword">end</span> = &#123; <span class="string">"&lt;/html&gt;"</span>, <span class="string">"&lt;/head&gt;"</span>, <span class="string">"&lt;/body&gt;"</span> &#125;; </span><br><span class="line">var tags =<span class="keyword">start</span>.Zip(<span class="keyword">end</span>, (s, e)=&gt;&#123; <span class="keyword">return</span> s + e; &#125;);</span><br><span class="line">foreach <span class="built_in">(string</span> <span class="type">item</span> <span class="keyword">in</span> tags)</span><br><span class="line">&#123;    </span><br><span class="line">Console.WriteLine(<span class="type">item</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>6、SequenceEqual：判断两个序列是否相等，需要内容及顺序都相等。<br>
+示例：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr1 = &#123; <span class="number">1</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">9</span> &#125;;</span><br><span class="line"><span class="keyword">int</span>[] arr2 = &#123; <span class="number">1</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">4</span> &#125;;</span><br><span class="line"><span class="built_in">Console</span>.WriteLine(<span class="string">"排序前 是否相等：&#123;0&#125;"</span> , arr1.SequenceEqual(arr2) ? <span class="string">"是"</span> : <span class="string">"否"</span>); <span class="comment">// 否</span></span><br><span class="line"><span class="built_in">Console</span>.WriteLine();</span><br><span class="line"><span class="built_in">Console</span>.WriteLine(<span class="string">"排序后 是否相等:&#123;0&#125;"</span>, </span><br><span class="line">arr1.SequenceEqual(arr2.OrderBy(k =&gt; k)) ? <span class="string">"是"</span> : <span class="string">"否"</span>); <span class="comment">// 是</span></span><br></pre></td></tr></table></figure>
+<h3><span id="元素操作符">元素操作符</span></h3>
+<p>这些元素操作符仅返回一个元素，不是IEnumerable<tsource>。（默认值：值类型默认为0，引用类型默认为null）<br>
+1、First：返回序列中的第一个元素；如果是空序列，此方法将引发异常。<br>
+2、FirstOrDefault：返回序列中的第一个元素；如果是空序列，则返回默认值default(TSource)。<br>
+3、Last：返回序列的最后一个元素；如果是空序列，此方法将引发异常。<br>
+4、LastOrDefault：返回序列中的最后一个元素；如果是空序列，则返回默认值default(TSource)。<br>
+5、Single：返回序列的唯一元素；如果是空序列或序列包含多个元素，此方法将引发异常。<br>
+6、SingleOrDefault：返回序列中的唯一元素；如果是空序列，则返回默认值default(TSource)；如果该序列包含多个元素，此方法将引发异常。<br>
+7、 ElementAt：返回序列中指定索引处的元素，索引从0开始；如果索引超出范围，此方法将引发异常。<br>
+8、 ElementAtOrDefault：返回序列中指定索引处的元素，索引从0开始；如果索引超出范围，则返回默认值default(TSource)。</tsource></p>
+<p>业务说明：获取冠军数排名第三的车手冠军</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Racer3 = Formula1.GetChampions()   </span><br><span class="line">.OrderByDescending(<span class="function"><span class="params">r</span> =&gt;</span> r.Wins)    </span><br><span class="line">.ElementAtOrDefault(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<h3><span id="合计操作符">合计操作符</span></h3>
+<p>1、Count：返回一个 System.Int32，表示序列中的元素的总数量。<br>
+2、LongCount：返回一个 System.Int64，表示序列中的元素的总数量。<br>
+3、Sum：计算序列中元素值的总和。<br>
+4、Max：返回序列中的最大值。<br>
+5、Min：返回序列中的最小值。<br>
+6、 Average：计算序列的平均值。<br>
+7、Aggregate：对序列应用累加器函数。<br>
+Aggregate比较复杂，所以只列出Aggregate示例。<br>
+Aggregate的第一个参数是算法的种子，即初始值。第二个参数是一个表达式，用来对每个元素进行计算（委托第一个参数是累加变量，第二个参数当前项）。第三个参数是一个表达式，用来对最终结果进行数据转换。</p>
+<figure class="highlight stan"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] numbers = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> &#125;;<span class="comment">// 1+2+3 = 6</span></span><br><span class="line"><span class="keyword">int</span> y = numbers.Aggregate((<span class="built_in">prod</span>, n) =&gt; <span class="built_in">prod</span> + n);<span class="comment">// 0+1+2+3 = 6</span></span><br><span class="line"><span class="keyword">int</span> x = numbers.Aggregate(<span class="number">0</span>, (<span class="built_in">prod</span>, n) =&gt; <span class="built_in">prod</span> + n);<span class="comment">// （0+1+2+3）*2 = 12</span></span><br><span class="line"><span class="keyword">int</span> z = numbers.Aggregate(<span class="number">0</span>, (<span class="built_in">prod</span>, n) =&gt; <span class="built_in">prod</span> + n, r =&gt; r * <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<ol start="11">
+<li>转换操作符<br>
+1、Cast：将非泛型的 IEnumerable 集合元素转换为指定的泛型类型，若类型转换失败则抛出异常。<br>
+2、 ToArray：从 IEnumerable<t> 创建一个数组。<br>
+3、ToList：从 IEnumerable<t> 创建一个 List<t>。<br>
+4、ToDictionary：根据指定的键选择器函数，从 IEnumerable<t> 创建一个 Dictionary&lt;TKey,TValue&gt;。<br>
+5、 ToLookup：根据指定的键选择器函数，从 IEnumerable<t> 创建一个 System.Linq.Lookup&lt;TKey,TElement&gt;。<br>
+6、 DefaultIfEmpty：返回指定序列的元素；如果序列为空，则返回包含类型参数的默认值的单一元素集合。<br>
+Eg:</t></t></t></t></t></li>
+</ol>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> defaultArrCount = (<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">0</span>]).DefaultIfEmpty().Count(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+<p>7、AsEnumerable：返回类型为 IEnumerable<t> 。用于处理LINQ to Entities操作远程数据源与本地集合的协作。（后续在LINQ to Entities博文中会详细解说）</t></p>
+<p>ToLookup使用比较复杂，所以以ToLookup为示例。<br>
+Lookup类似于Dictionary，不过，Dictionary每个键只对应一个值，而Lookup则是1：n 的映射。Lookup没有公共构造函数，而且是不可变的。在创建Lookup之后，不能添加或删除其中的元素或键。（可以将ToLookup 视为GroupBy与ToDictionary的功能合体）<br>
+API：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static ILookup<span class="tag">&lt;<span class="name">TKey,</span> <span class="attr">TElement</span>&gt;</span> ToLookup<span class="tag">&lt;<span class="name">TSource,</span> <span class="attr">TKey</span>, <span class="attr">TElement</span>&gt;</span>( this IEnumerable<span class="tag">&lt;<span class="name">TSource</span>&gt;</span> source,Func<span class="tag">&lt;<span class="name">TSource,</span> <span class="attr">TKey</span>&gt;</span> keySelector,Func<span class="tag">&lt;<span class="name">TSource,</span> <span class="attr">TElement</span>&gt;</span> elementSelector);</span><br></pre></td></tr></table></figure>
+<p>业务说明：将车手冠军按其使用车型进行分组，并显示使用”williams”车型的车手名字。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ILookup&lt;<span class="built_in">string</span>, Racer&gt;racers=(<span class="keyword">from</span> r <span class="keyword">in</span> Formula1.GetChampions()     </span><br><span class="line"><span class="keyword">from</span> c <span class="keyword">in</span> r.Cars    </span><br><span class="line">select <span class="keyword">new</span>&#123;Car=c,Racer=r&#125;)</span><br><span class="line">.ToLookup(<span class="function"><span class="params">cr</span> =&gt;</span> cr.Car, <span class="function"><span class="params">cr</span> =&gt;</span> cr.Racer);</span><br><span class="line"><span class="keyword">if</span> (racers.Contains(<span class="string">"Williams"</span>))</span><br><span class="line">&#123;</span><br><span class="line">foreach (<span class="keyword">var</span> williamsRacer <span class="keyword">in</span> racers[<span class="string">"Williams"</span>])</span><br><span class="line">&#123;        </span><br><span class="line">Console.WriteLine(williamsRacer);</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="生成操作符">生成操作符</span></h3>
+<p>生成操作符返回一个新的集合。（三个生成操作符不是扩展方法，而是返回序列的正常静态方法）<br>
+1、Empty：生成一个具有指定类型参数的空序列 IEnumerable<t>。<br>
+2、Range：生成指定范围内的整数的序列 IEnumerable<int32>。<br>
+3、Repeat：生成包含一个重复值的序列 IEnumerable<t>。<br>
+API：</t></int32></t></p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;TResult&gt; Empty&lt;TResult&gt;();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;<span class="keyword">int</span>&gt; Range(<span class="keyword">int</span> start, <span class="keyword">int</span> <span class="keyword">count</span>);</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> IEnumerable&lt;TResult&gt; Repeat&lt;TResult&gt;(TResult element, <span class="keyword">int</span> <span class="keyword">count</span>);</span><br></pre></td></tr></table></figure>
+<h2><span id="linq-to-objects中的延迟计算">Linq to Objects中的延迟计算</span></h2>
+<p>Linq查询的延迟计算原理：通过给LINQ扩展方法传递方法委托，作为yield迭代器的主体，让遍历执行到MoveNext()时才执行耗时的指令。</p>
+<h3><span id="linq延迟计算的注意点">Linq延迟计算的注意点</span></h3>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IEnumerable&lt;<span class="keyword">char</span>&gt; <span class="keyword">query</span> = <span class="string">"Not what you might expect"</span>;<span class="keyword">foreach</span> (<span class="keyword">char</span> item <span class="keyword">in</span> <span class="string">"aeiou"</span>)    <span class="keyword">query</span> = <span class="keyword">query</span>.Where(c =&gt; c != item);<span class="comment">// 只删除了'u'----Not what yo might expect  foreach (char c in query)    Console.Write(c);</span></span><br></pre></td></tr></table></figure>
+<p>我们原本的期望结果是：删除掉字符串中所有的原音字母。但现在只删除’u’，因为item变量是循环外部声明的，同一个变量重复声明更新，所以结束当前循环时，item记录的是循环最后一个值，即结束当前循环后再执行的lambda表达式引用item值为’u’。（注意 .NET4.5 对这一实现有变动，后面有介绍）<br>
+为了解决这个问题，必须将循环变量赋值到一个在循环代码块内声明的变量：</p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IEnumerable&lt;<span class="keyword">char</span>&gt; query1 = <span class="string">"Not what you might expect"</span>;</span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">char</span> item in <span class="string">"aeiou"</span>)</span><br><span class="line">&#123;    </span><br><span class="line"><span class="keyword">char</span> temp = item;    </span><br><span class="line">query1 = query1.Where(c =&gt; c != temp);&#125;<span class="comment">// Nt wht y mght xpct  </span></span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">char</span> c in query1)   </span><br><span class="line">Console.Write(c);</span><br></pre></td></tr></table></figure>
+<p>园友 @JulioZou 反馈了一个问题，上面延迟计算的示例在.NET4.5环境下两段代码最后输出都是：“Nt wht y mght xpct”。现在看下原因：<br>
+从Reflector工具看对于代码段一两者的编译情况是不一样的：<br>
+<img src="8.png" alt="avatar"></p>
+<p>即，.NET 4.5会自己生成一个内部循环变量。更详细的分析可见《关于foreach语句在C#4.5中的改进》<br>
+所以演示延迟计算，可通过此段代码进行说明：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">IEnumerable&lt;char&gt; query = <span class="string">"Not what you might expect"</span>;</span><br><span class="line"><span class="keyword">var</span> item = <span class="string">'a'</span>;query = query.Where(<span class="function"><span class="params">c</span> =&gt;</span> c != item);</span><br><span class="line">item = <span class="string">'e'</span>;query = query.Where(<span class="function"><span class="params">c</span> =&gt;</span> c != item);</span><br><span class="line">item = <span class="string">'i'</span>;</span><br><span class="line">query = query.Where(<span class="function"><span class="params">c</span> =&gt;</span> c != item);</span><br><span class="line">item = <span class="string">'o'</span>;</span><br><span class="line">query = query.Where(<span class="function"><span class="params">c</span> =&gt;</span> c != item);</span><br><span class="line">item = <span class="string">'u'</span>;</span><br><span class="line">query = query.Where(<span class="function"><span class="params">c</span> =&gt;</span> c != item);<span class="comment">// 只删除了'u'----Not what yo might expect  </span></span><br><span class="line">foreach (char c <span class="keyword">in</span> query)    </span><br><span class="line">Console.Write(c);</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>
+<pre><code>   整理Linq to Objects中运算符延迟计算特性
+</code></pre>
+</li>
+</ol>
+<p>按字母顺序整理：</p>
+<table>
+<thead>
+<tr>
+<th>具有延迟计算的运算符</th>
+<th>Cast，Concat，DefaultIfEmpty，Distinct，Except，GroupBy，GroupJoin，Intersect ，Join，OfType，OrderBy，OrderByDescending，Repeat，Reverse，Select，SelectMany，Skip，SkipWhile，Take，TakeWhile，ThenBy，ThenByDescending，Union，Where，Zip</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>立即执行的运算符</td>
+<td>Aggregate，All，Any，Average，Contains，Count，ElementAt，ElementAtOrDefault ，Empty，First，FirstOrDefault，Last，LastOrDefault，LongCount，Max，Min，Range ，SequenceEqual，Single，SingleOrDefault，Sum，ToArray，ToDictionary，ToList，ToLookup</td>
+</tr>
+</tbody>
+</table>
+<p>特殊的AsEnumerable运算符，用于处理LINQ to Entities操作远程数据源，将IQueryable远程数据立即转化为本地的IEnumerable集合。若AsEnumerable接收参数是IEnumerable内存集合则什么都不做。<br>
+示例代码截图：（已在文章开头提供下载连接）<br>
+<img src="9.png" alt="avatar"><br>
+本博文就到此结束了，通过本博文，我们学会什么是LINQ查询、LINQ中涉及的.NET基础知识、LINQ中各种运算符、延迟计算等等……</p>
+<hr>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Place this tag where you want the button to render. -->
+<p>Please <a class="github-button" href="https://github.com/xyzko1/myblog" data-icon="octicon-star" aria-label="Star xyzko1/myblog on GitHub" target="_blank" rel="noopener">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/xyzko1" aria-label="Follow @xyzko1 on GitHub" target="_blank" rel="noopener">Follow</a> would also be appreciated!<br>
+Peace!</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/08/13/常见的Web实时消息交互方式和SignalR/" data-toggle="tooltip" data-placement="top" title="常见的Web实时消息交互方式和SignalR">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/06/23/Quartz.NET实现作业调度/" data-toggle="tooltip" data-placement="top" title="Quartz.NET实现作业调度">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">相关技术</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">隐式类型、匿名类型、对象初始化器</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">隐式类型</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">匿名类型</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">对象初始化器</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Lambda表达式，Func委托</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">Lambda表达式只是用更简单的方式来书写匿名方法，从而彻底简化.NET委托类型的使用。</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">Func委托</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">扩展方法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">Yield迭代器，延迟计算</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.4.1.</span> <span class="toc-nav-text">Yield迭代器</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.4.2.</span> <span class="toc-nav-text">延迟计算（Lazy evaluation）</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">表达式树</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Language Integrated Query（LINQ，语言集成查询）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">怎样区分LINQ操作时，使用的是哪个LINQ提供程序？</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">LINQ查询提供几种操作语法？</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">LINQ查询表达式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">LINQ to Objects</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">示例业务背景介绍</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">各种LINQ示例</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.1.</span> <span class="toc-nav-text">过滤操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.2.</span> <span class="toc-nav-text">投影操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.3.</span> <span class="toc-nav-text">排序操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.4.</span> <span class="toc-nav-text">连接操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.5.</span> <span class="toc-nav-text">分组操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.6.</span> <span class="toc-nav-text">量词操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.7.</span> <span class="toc-nav-text">分区操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.8.</span> <span class="toc-nav-text">集合操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.9.</span> <span class="toc-nav-text">元素操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.10.</span> <span class="toc-nav-text">合计操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.11.</span> <span class="toc-nav-text">生成操作符</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Linq to Objects中的延迟计算</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.3.1.</span> <span class="toc-nav-text">Linq延迟计算的注意点</span></a></li></ol></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Hexo" title="Hexo">Hexo</a>
+                        
+                          <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://beantech.org" target="_blank">Bean Tech</a></li>
+                    
+                        <li><a href="http://blog.kaijun.rocks" target="_blank">Kaijun&#39;s Blog</a></li>
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">It Helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "your-disqus-ID";
+    var disqus_identifier = "https://xyzko1.github.io/2019/07/21/Linq入门详解/";
+    var disqus_url = "https://xyzko1.github.io/2019/07/21/Linq入门详解/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/xyzko1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/xyzko1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/xyzko1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; xyzko1 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://xyzko1.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://xyzko1.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
